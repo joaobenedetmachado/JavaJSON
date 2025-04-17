@@ -1,12 +1,9 @@
 package org.example;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.example.models.Tasks;
-import org.example.models.User;
+import com.google.gson.*;
 
-import java.lang.reflect.Type;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -18,16 +15,38 @@ public class Main {
         scanner.close();
 
         Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(inputJson, JsonObject.class);
 
-        Type userListType = new TypeToken<List<User>>(){}.getType();
+        processJsonObject(jsonObject);
+    }
 
-        List<User> users = gson.fromJson(inputJson, userListType);
+    // a funcao que vai percorrer todos os objetos e listas dentro do JSON
+    public static void processJsonObject(JsonObject jsonObject) {
+        Iterator<Map.Entry<String, JsonElement>> iterator = jsonObject.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, JsonElement> entry = iterator.next();
+            String key = entry.getKey();
+            JsonElement value = entry.getValue();
+            if (value.isJsonObject()) {
+                // se o valor for um objeto/lista e tal, chamamos a função recursivamente
+                System.out.println("Processing nested object for key: " + key);
+                processJsonObject(value.getAsJsonObject());
+            } else if (value.isJsonArray()) {
+                System.out.println("Processing array for key: " + key);
+                processJsonArray(value.getAsJsonArray());
+            } else {
+                System.out.println(  key + ": " + value);
+            }
+        }
+    }
 
-        for (User u : users) {
-            System.out.println("User: " + u.getName());
-            for (Tasks t : u.getTasks()) {
-                String status = t.isDone() ? "CONCLUDED" : "PENDING";
-                System.out.println("  - " + t.getTitle() + " [" + status + "]");
+    public static void processJsonArray(JsonArray jsonArray) {
+        for (JsonElement element : jsonArray) {
+            if (element.isJsonObject()) {
+                processJsonObject(element.getAsJsonObject());
+            } else {
+                // caso seja um valor simples
+                System.out.println("Array Value: " + element);
             }
         }
     }
