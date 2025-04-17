@@ -31,9 +31,10 @@ public class Main {
                 // se o valor for um objeto/lista e tal, chamamos a função recursivamente
                 processJsonObject(value.getAsJsonObject());
             } else if (value.isJsonArray()) {
+                System.out.println(key + ": ");
                 processJsonArray(value.getAsJsonArray());
             } else {
-                System.out.println(  key + ": " + value);
+                System.out.println("    " + key + ": " + value);
             }
         }
     }
@@ -43,7 +44,6 @@ public class Main {
             if (element.isJsonObject()) {
                 processJsonObject(element.getAsJsonObject());
             } else {
-                System.out.println(element);
             }
         }
     }
