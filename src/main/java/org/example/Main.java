@@ -29,10 +29,8 @@ public class Main {
             JsonElement value = entry.getValue();
             if (value.isJsonObject()) {
                 // se o valor for um objeto/lista e tal, chamamos a função recursivamente
-                System.out.println("Processing nested object for key: " + key);
                 processJsonObject(value.getAsJsonObject());
             } else if (value.isJsonArray()) {
-                System.out.println("Processing array for key: " + key);
                 processJsonArray(value.getAsJsonArray());
             } else {
                 System.out.println(  key + ": " + value);
@@ -45,8 +43,7 @@ public class Main {
             if (element.isJsonObject()) {
                 processJsonObject(element.getAsJsonObject());
             } else {
-                // caso seja um valor simples
-                System.out.println("Array Value: " + element);
+                System.out.println(element);
             }
         }
     }
