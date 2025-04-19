@@ -1,6 +1,7 @@
 package org.example;
 
 import com.google.gson.*;
+import org.example.colors.Colors;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -29,22 +30,42 @@ public class Main {
             JsonElement value = entry.getValue();
             if (value.isJsonObject()) {
                 // se o valor for um objeto/lista e tal, chamamos a função recursivamente
-                processJsonObject(value.getAsJsonObject());
+                processJsonObject(value.getAsJsonObject(), "");
             } else if (value.isJsonArray()) {
-                System.out.println(key + ": ");
-                processJsonArray(value.getAsJsonArray());
+                System.out.println(Colors.RED + key + ": " + Colors.RESET);
+            processJsonArray(value.getAsJsonArray(), "");
             } else {
-                System.out.println("    " + key + ": " + value);
+                System.out.println("    " + Colors.BLUE_BOLD + key + ": " + Colors.BLUE +value);
             }
         }
     }
 
-    public static void processJsonArray(JsonArray jsonArray) {
-        for (JsonElement element : jsonArray) {
-            if (element.isJsonObject()) {
-                processJsonObject(element.getAsJsonObject());
+    // Passe um parâmetro extra para rastrear o caminho atual
+    public static void processJsonObject(JsonObject jsonObject, String path) {
+        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+            String key = entry.getKey();
+            JsonElement value = entry.getValue();
+            String fullPath = path.isEmpty() ? key : path + "." + key;
+
+            if (value.isJsonObject()) {
+                processJsonObject(value.getAsJsonObject(), fullPath);
+            } else if (value.isJsonArray()) {
+                System.out.println(Colors.RED + fullPath + ": " + Colors.RESET);
+                processJsonArray(value.getAsJsonArray(), fullPath);
             } else {
+                System.out.println("    " + Colors.BLUE_BOLD + fullPath + ": " + Colors.BLUE + value);
             }
         }
     }
-}
+
+    public static void processJsonArray(JsonArray jsonArray, String path) {
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonElement element = jsonArray.get(i);
+            String newPath = path + "[" + i + "]";
+            if (element.isJsonObject()) {
+                processJsonObject(element.getAsJsonObject(), newPath);
+            } else {
+                System.out.println("    " + Colors.PURPLE + newPath + ": " + Colors.RESET + element);
+            }
+        }
+    }}
