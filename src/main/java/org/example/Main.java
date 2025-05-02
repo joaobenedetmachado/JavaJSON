@@ -11,7 +11,13 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Paste your JSON:");
-        String inputJson = scanner.useDelimiter("\\A").next();
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while (!(line = scanner.nextLine()).isEmpty()) {
+            sb.append(line).append("\n");
+        }
+
+        String inputJson = sb.toString();
         scanner.close();
 
         Gson gson = new Gson();
